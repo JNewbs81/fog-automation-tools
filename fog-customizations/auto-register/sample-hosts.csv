@@ -1,0 +1,7 @@
+hostname,mac_address,serial_number,image_name,group_name
+PC-LAB-001,aa:bb:cc:dd:ee:01,ABC12345,Windows11-PC,Lab-PCs
+PC-LAB-002,aa:bb:cc:dd:ee:02,ABC12346,Windows11-PC,Lab-PCs
+PC-LAB-003,,ABC12347,Windows11-PC,Lab-PCs
+OFFICE-PC-001,,,Windows11-PC,Office-PCs
+OFFICE-PC-002,,,Windows11-PC,Office-PCs
+

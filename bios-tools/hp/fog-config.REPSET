@@ -1,0 +1,72 @@
+BIOSConfig 1.0
+;
+; HP BIOS Configuration for FOG Imaging
+; Compatible with HP EliteDesk 705 G4 and similar models
+;
+; Settings:
+;   - Secure Boot: Disabled (with Legacy Support)
+;   - Network/PXE Boot: Enabled
+;   - Boot Order: Network first
+;
+
+; Secure Boot Configuration - Method 1 (older format)
+Secure Boot Configuration
+	Configure Legacy Support and Secure Boot
+		*Legacy Support Enable and Secure Boot Disable
+
+; Secure Boot - Method 2 (newer format)
+SecureBoot
+	*Disable
+
+; Enable PXE/Network Boot
+Network (PXE) Boot
+	*Enable
+
+; Alternative network boot setting
+Network Boot
+	*Enable
+
+; IPv4 PXE Configuration
+IPv4 PXE Boot
+	*Enable
+
+; Network Boot Configuration
+Network Boot Configuration
+	IPv4
+		*Enable
+	IPv6
+		Disable
+
+; UEFI Boot Sources
+UEFI Boot Sources
+	Network Adapter
+		*Enabled
+
+; Fast Boot - Disable for PXE reliability
+Fast Boot
+	*Disable
+
+; Network Boot Retry
+Network Boot Retry
+	*Enable
+
+; Boot Mode - UEFI Native (required for modern imaging)
+Boot Mode
+	*UEFI Native (Without CSM)
+
+; After Power Loss - ensure system can be powered on remotely
+After Power Loss
+	*Previous State
+
+; Wake on LAN
+Wake on LAN
+	*Boot to Hard Drive
+
+; S5 Wake on LAN
+S5 Wake on LAN
+	*Enable
+
+; Runtime Power Management
+Runtime Power Management - S4/S5 Wake on LAN
+	*Enable
+
