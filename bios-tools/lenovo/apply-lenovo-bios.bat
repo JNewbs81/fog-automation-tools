@@ -1,7 +1,7 @@
 @echo off
 REM Lenovo BIOS Configuration Script for FOG Imaging
-REM Requires Lenovo Think BIOS Config Tool (SRSETUP or WMI method)
-REM Download from: https://support.lenovo.com/solutions/ht100612
+REM Uses Think BIOS Config Tool (ThinkBiosConfig.hta)
+REM Download from: https://download.lenovo.com/cdrt/tools/tbct144.zip
 REM
 REM Settings applied:
 REM   - Secure Boot: Disabled
@@ -17,16 +17,14 @@ echo.
 
 REM Check for Think BIOS Config Tool in common locations
 set "TBCT="
-if exist "%~dp0SRSETUPWIN64.exe" set "TBCT=%~dp0SRSETUPWIN64.exe"
-if exist "%~dp0SRSETUP64.exe" set "TBCT=%~dp0SRSETUP64.exe"
-if exist "%~dp0WinSRSetup64.exe" set "TBCT=%~dp0WinSRSetup64.exe"
-if exist "C:\Program Files (x86)\Lenovo\BIOS Config Tool\SRSETUPWIN64.exe" set "TBCT=C:\Program Files (x86)\Lenovo\BIOS Config Tool\SRSETUPWIN64.exe"
-if exist "X:\Lenovo\SRSETUPWIN64.exe" set "TBCT=X:\Lenovo\SRSETUPWIN64.exe"
+if exist "%~dp0ThinkBiosConfig.hta" set "TBCT=%~dp0ThinkBiosConfig.hta"
+if exist "%~dp0tbct144\ThinkBiosConfig.hta" set "TBCT=%~dp0tbct144\ThinkBiosConfig.hta"
+if exist "X:\Lenovo\ThinkBiosConfig.hta" set "TBCT=X:\Lenovo\ThinkBiosConfig.hta"
 
 if "%TBCT%"=="" (
-    echo ERROR: Lenovo Think BIOS Config Tool not found!
-    echo Please ensure SRSETUP is placed in the same directory as this script.
-    echo Download from: https://support.lenovo.com/solutions/ht100612
+    echo ERROR: Think BIOS Config Tool not found!
+    echo Please ensure ThinkBiosConfig.hta is in the same directory as this script.
+    echo Download from: https://download.lenovo.com/cdrt/tools/tbct144.zip
     pause
     exit /b 1
 )
@@ -34,132 +32,58 @@ if "%TBCT%"=="" (
 echo Using Think BIOS Config Tool: %TBCT%
 echo.
 
-REM Check for BIOS password
+REM Check for config INI file
+set "CONFIG_INI=%~dp0fog-config.ini"
+if not exist "%CONFIG_INI%" (
+    echo ERROR: Configuration file not found: %CONFIG_INI%
+    pause
+    exit /b 1
+)
+
+echo Using configuration: %CONFIG_INI%
+echo.
+
+REM Check for BIOS password file
 set "PWD_ARG="
 if exist "%~dp0bios_password.txt" (
     set /p BIOS_PWD=<"%~dp0bios_password.txt"
-    set "PWD_ARG=,pass:!BIOS_PWD!"
+    set "PWD_ARG=pass:!BIOS_PWD!"
     echo BIOS password file found.
+    echo.
 )
 
-REM Check if INI config file exists (preferred method)
-if exist "%~dp0fog-config.ini" (
-    echo Using INI configuration file...
-    "%TBCT%" /config:"%~dp0fog-config.ini"
-    if %errorlevel% neq 0 (
-        echo WARNING: INI application had issues. Trying individual settings...
-    ) else (
-        echo SUCCESS: INI configuration applied
-        goto :verify
-    )
-)
-
-echo Applying individual BIOS settings...
-echo.
-
-echo Step 1: Disabling Secure Boot...
-"%TBCT%" /set:SecureBoot,Disabled%PWD_ARG%
-if %errorlevel% neq 0 (
-    REM Try alternative setting names
-    "%TBCT%" /set:"Secure Boot",Disabled%PWD_ARG%
-    if %errorlevel% neq 0 (
-        echo WARNING: Failed to disable Secure Boot
-    ) else (
-        echo SUCCESS: Secure Boot disabled
-    )
-) else (
-    echo SUCCESS: Secure Boot disabled
-)
-echo.
-
-echo Step 2: Enabling Ethernet LAN Boot Option...
-"%TBCT%" /set:EthernetLANOptionROM,Enabled%PWD_ARG%
-if %errorlevel% neq 0 (
-    "%TBCT%" /set:"Ethernet LAN Option ROM",Enabled%PWD_ARG%
-    if %errorlevel% neq 0 (
-        echo WARNING: Failed to enable Ethernet LAN Option ROM
-    ) else (
-        echo SUCCESS: Ethernet LAN Option ROM enabled
-    )
-) else (
-    echo SUCCESS: Ethernet LAN Option ROM enabled
-)
-echo.
-
-echo Step 3: Enabling IPv4 PXE Boot...
-"%TBCT%" /set:IPv4PXEBoot,Enabled%PWD_ARG%
-if %errorlevel% neq 0 (
-    "%TBCT%" /set:"IPv4 PXE Boot",Enabled%PWD_ARG%
-    if %errorlevel% neq 0 (
-        "%TBCT%" /set:NetworkBoot,Enabled%PWD_ARG%
-        if %errorlevel% neq 0 (
-            echo WARNING: Failed to enable IPv4 PXE Boot
-        ) else (
-            echo SUCCESS: Network Boot enabled
-        )
-    ) else (
-        echo SUCCESS: IPv4 PXE Boot enabled
-    )
-) else (
-    echo SUCCESS: IPv4 PXE Boot enabled
-)
-echo.
-
-echo Step 4: Enabling UEFI/Legacy Boot (for PXE compatibility)...
-"%TBCT%" /set:BootMode,"UEFI Only"%PWD_ARG%
-if %errorlevel% neq 0 (
-    echo WARNING: Failed to set boot mode
-) else (
-    echo SUCCESS: Boot mode set to UEFI Only
-)
-echo.
-
-echo Step 5: Setting Boot Priority...
-REM Enable Network Boot in boot priority
-"%TBCT%" /set:NetworkBoot,Enabled%PWD_ARG%
-echo Network Boot enabled for boot sequence
-echo.
-
-echo Step 6: Enabling Wake on LAN...
-"%TBCT%" /set:WakeOnLAN,Enabled%PWD_ARG%
-if %errorlevel% neq 0 (
-    "%TBCT%" /set:"Wake on LAN",Enabled%PWD_ARG%
-    if %errorlevel% neq 0 (
-        echo WARNING: Failed to enable Wake on LAN
-    ) else (
-        echo SUCCESS: Wake on LAN enabled
-    )
-) else (
-    echo SUCCESS: Wake on LAN enabled
-)
-echo.
-
-echo Step 7: Setting Wake on LAN from S4/S5...
-"%TBCT%" /set:WakeOnLANfromDock,Enabled%PWD_ARG%
-"%TBCT%" /set:"Wake on LAN from S4/S5",ACOnly%PWD_ARG%
-echo.
-
-:verify
 echo ============================================
-echo Verifying Current Settings
+echo Applying BIOS Configuration
 echo ============================================
 echo.
+echo This will apply the following settings:
+echo   - Secure Boot: Disabled
+echo   - Network Boot: Enabled  
+echo   - IPv4 PXE Boot: Enabled
+echo   - Wake on LAN: Enabled
+echo.
 
-REM Export current config for verification
-set "EXPORTCONFIG=%TEMP%\lenovo_current_config.ini"
-"%TBCT%" /export:"%EXPORTCONFIG%"
-if exist "%EXPORTCONFIG%" (
-    echo Checking Secure Boot status...
-    findstr /i "SecureBoot\|Secure Boot" "%EXPORTCONFIG%"
-    echo.
-    
-    echo Checking Network Boot status...
-    findstr /i "Ethernet\|Network\|PXE\|IPv4" "%EXPORTCONFIG%"
-    echo.
-    
-    echo Full configuration exported to: %EXPORTCONFIG%
+REM Apply configuration using Think BIOS Config Tool
+REM The HTA accepts: "file:<inipath>" and optionally "pass:<password>"
+if defined PWD_ARG (
+    echo Running: mshta "%TBCT%" "file:%CONFIG_INI%" "%PWD_ARG%"
+    mshta "%TBCT%" "file:%CONFIG_INI%" "%PWD_ARG%"
 ) else (
-    echo Could not export current configuration for verification.
+    echo Running: mshta "%TBCT%" "file:%CONFIG_INI%"
+    mshta "%TBCT%" "file:%CONFIG_INI%"
+)
+
+set "RESULT=%errorlevel%"
+
+echo.
+if %RESULT% equ 0 (
+    echo SUCCESS: BIOS configuration applied
+) else if %RESULT% equ 1 (
+    echo WARNING: Some settings may not have applied ^(return code: %RESULT%^)
+) else if %RESULT% equ 3 (
+    echo ERROR: Password mismatch ^(return code: %RESULT%^)
+) else (
+    echo Result code: %RESULT%
 )
 
 echo.
@@ -167,10 +91,11 @@ echo ============================================
 echo Configuration Complete!
 echo ============================================
 echo.
+echo NOTE: Some BIOS changes require a reboot to take effect.
+echo.
 echo The system will reboot in 10 seconds to apply changes...
 echo Press Ctrl+C to cancel reboot.
 echo.
 
 timeout /t 10
 shutdown /r /t 0 /f
-
