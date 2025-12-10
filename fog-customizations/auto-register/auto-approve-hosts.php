@@ -64,17 +64,20 @@ $modelMapping = [
     // ===================
     // HP DESKTOPS
     // ===================
-    // HP EliteDesk 705 G4 (the mini/micro form factor)
+    // HP EliteDesk - all use Micro W11 image
     'EliteDesk 705 G4'  => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
     'EliteDesk 705'     => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
+    'EliteDesk 800'     => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
+    'EliteDesk'         => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
     
-    // HP M01 series
+    // HP ProDesk - all use Micro W11 image
+    'ProDesk 400'       => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
+    'ProDesk 600'       => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
+    'ProDesk'           => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
+    
+    // HP M01 series (towers)
     'HP M01'            => ['image' => 'HP_M01xxxx - 7', 'group' => ''],
     'M01'               => ['image' => 'HP_M01xxxx - 7', 'group' => ''],
-    
-    // HP White/other models
-    'ProDesk'           => ['image' => 'HP_White - 4', 'group' => ''],
-    'EliteDesk'         => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
     
     // ===================
     // LENOVO (using HP image as fallback until Lenovo images created)
