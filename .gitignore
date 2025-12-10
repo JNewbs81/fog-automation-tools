@@ -1,11 +1,3 @@
-# Vendor BIOS tools (download separately due to licensing)
-bios-tools/dell/cctk.exe
-bios-tools/dell/cctk/
-bios-tools/hp/BiosConfigUtility*.exe
-bios-tools/hp/HPBCU*/
-bios-tools/lenovo/SRSETUP*.exe
-bios-tools/lenovo/ThinkBIOS*/
-
 # BIOS passwords (sensitive)
 bios_password.txt
 bios_password.bin
@@ -19,6 +11,14 @@ bios_password.bin
 *.temp
 ~$*
 
+# Extracted/temp folders from installers
+bios-tools/dell/extracted/
+bios-tools/dell/cctk/
+
+# Large installer files (keep the extracted tools, not the installers)
+Dell-Command-Configure-Application*.EXE
+Setup.exe
+
 # OS files
 .DS_Store
 Thumbs.db
@@ -29,4 +29,3 @@ desktop.ini
 *.swo
 .vscode/
 .idea/
-

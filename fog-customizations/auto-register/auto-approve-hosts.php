@@ -2,46 +2,97 @@
 /**
  * FOG Auto-Approve Pending Hosts
  * 
- * This script automatically approves pending hosts and optionally assigns them
- * to a default image and group based on configuration.
+ * This script automatically approves pending hosts and assigns them
+ * to images and groups based on their hardware model.
  * 
  * Can be run via cron or called from the web interface.
  * 
  * Usage:
- *   CLI: php auto-approve-hosts.php [--dry-run] [--image=ImageName] [--group=GroupName]
- *   Web: auto-approve-hosts.php?key=YOUR_API_KEY&image=ImageName
+ *   CLI: php auto-approve-hosts.php [--dry-run]
+ *   Web: auto-approve-hosts.php?key=YOUR_API_KEY
  */
 
 // Load FOG core
 require_once('/var/www/html/fog/lib/fog/core.class.php');
 
-// Configuration
+// =============================================================================
+// CONFIGURATION - Edit these settings for your environment
+// =============================================================================
+
 $config = [
     'api_key' => 'CHANGE_THIS_TO_A_SECURE_KEY',  // Required for web access
-    'default_image' => '',      // Default image name to assign (empty = don't assign)
-    'default_group' => '',      // Default group name to add to (empty = don't add)
     'auto_rename' => true,      // Rename hosts from MAC to serial number
     'log_file' => '/var/log/fog-auto-approve.log',
+    'default_image' => '',      // Fallback image if no model match (empty = don't assign)
+    'default_group' => '',      // Fallback group if no model match (empty = don't add)
 ];
+
+// =============================================================================
+// MODEL-BASED IMAGE MAPPING
+// =============================================================================
+// Map PC models to specific images and groups
+// The script checks if the model CONTAINS any of these strings (case-insensitive)
+// 
+// Format: 'model_pattern' => ['image' => 'ImageName', 'group' => 'GroupName']
+// 
+// Examples:
+//   'OptiPlex 3050' => ['image' => 'Win11-PC', 'group' => 'Desktops']
+//   'EliteDesk'     => ['image' => 'Win11-PC', 'group' => 'HP-PCs']
+//   'Latitude'      => ['image' => 'Win11-Laptop', 'group' => 'Laptops']
+
+$modelMapping = [
+    // Dell Desktop
+    'OptiPlex 3050'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
+    'OptiPlex 3060'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
+    'OptiPlex 3070'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
+    'OptiPlex 3080'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
+    'OptiPlex 5050'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
+    'OptiPlex 7050'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
+    'OptiPlex 7060'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
+    'OptiPlex'          => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
+    
+    // Dell Workstation
+    'Precision 5820'    => ['image' => 'Windows11-Workstation', 'group' => 'Dell-Workstations'],
+    'Precision 7820'    => ['image' => 'Windows11-Workstation', 'group' => 'Dell-Workstations'],
+    'Precision Tower'   => ['image' => 'Windows11-Workstation', 'group' => 'Dell-Workstations'],
+    'Precision'         => ['image' => 'Windows11-Workstation', 'group' => 'Dell-Workstations'],
+    
+    // Dell Laptop
+    'Latitude'          => ['image' => 'Windows11-Laptop', 'group' => 'Dell-Laptops'],
+    
+    // HP Desktop
+    'EliteDesk 705 G4'  => ['image' => 'Windows11-PC', 'group' => 'HP-Desktops'],
+    'EliteDesk 800'     => ['image' => 'Windows11-PC', 'group' => 'HP-Desktops'],
+    'EliteDesk'         => ['image' => 'Windows11-PC', 'group' => 'HP-Desktops'],
+    'ProDesk'           => ['image' => 'Windows11-PC', 'group' => 'HP-Desktops'],
+    
+    // HP Laptop
+    'EliteBook'         => ['image' => 'Windows11-Laptop', 'group' => 'HP-Laptops'],
+    'ProBook'           => ['image' => 'Windows11-Laptop', 'group' => 'HP-Laptops'],
+    'ZBook'             => ['image' => 'Windows11-Workstation', 'group' => 'HP-Workstations'],
+    
+    // Lenovo Desktop
+    'ThinkCentre'       => ['image' => 'Windows11-PC', 'group' => 'Lenovo-Desktops'],
+    'ThinkStation'      => ['image' => 'Windows11-Workstation', 'group' => 'Lenovo-Workstations'],
+    
+    // Lenovo Laptop
+    'ThinkPad'          => ['image' => 'Windows11-Laptop', 'group' => 'Lenovo-Laptops'],
+];
+
+// =============================================================================
+// END CONFIGURATION
+// =============================================================================
 
 // Parse arguments
 $isDryRun = false;
-$imageName = $config['default_image'];
-$groupName = $config['default_group'];
 
 if (php_sapi_name() === 'cli') {
-    // CLI mode
     foreach ($argv as $arg) {
         if ($arg === '--dry-run') {
             $isDryRun = true;
-        } elseif (strpos($arg, '--image=') === 0) {
-            $imageName = substr($arg, 8);
-        } elseif (strpos($arg, '--group=') === 0) {
-            $groupName = substr($arg, 8);
         }
     }
 } else {
-    // Web mode - require API key
     header('Content-Type: application/json');
     
     $providedKey = $_GET['key'] ?? $_POST['key'] ?? '';
@@ -52,8 +103,6 @@ if (php_sapi_name() === 'cli') {
     }
     
     $isDryRun = isset($_GET['dry-run']) || isset($_POST['dry-run']);
-    $imageName = $_GET['image'] ?? $_POST['image'] ?? $config['default_image'];
-    $groupName = $_GET['group'] ?? $_POST['group'] ?? $config['default_group'];
 }
 
 // Logging function
@@ -65,6 +114,40 @@ function logMsg($msg) {
     if (php_sapi_name() === 'cli') {
         echo $line;
     }
+}
+
+// Function to find matching model config
+function getModelConfig($model) {
+    global $modelMapping, $config;
+    
+    if (empty($model)) {
+        return [
+            'image' => $config['default_image'],
+            'group' => $config['default_group'],
+            'matched' => false,
+            'pattern' => null
+        ];
+    }
+    
+    // Check each pattern (more specific patterns should be listed first)
+    foreach ($modelMapping as $pattern => $mapping) {
+        if (stripos($model, $pattern) !== false) {
+            return [
+                'image' => $mapping['image'] ?? $config['default_image'],
+                'group' => $mapping['group'] ?? $config['default_group'],
+                'matched' => true,
+                'pattern' => $pattern
+            ];
+        }
+    }
+    
+    // No match found, use defaults
+    return [
+        'image' => $config['default_image'],
+        'group' => $config['default_group'],
+        'matched' => false,
+        'pattern' => null
+    ];
 }
 
 // Initialize FOG
@@ -80,31 +163,32 @@ try {
 }
 
 logMsg("Starting auto-approve process" . ($isDryRun ? " (DRY RUN)" : ""));
+logMsg("Model mappings configured: " . count($modelMapping));
 
-// Get default image if specified
-$defaultImage = null;
-if (!empty($imageName)) {
-    $defaultImage = FOGCore::getClass('ImageManager')->find(['name' => $imageName]);
-    if ($defaultImage && count($defaultImage) > 0) {
-        $defaultImage = $defaultImage[0];
-        logMsg("Default image: {$imageName} (ID: {$defaultImage->get('id')})");
-    } else {
-        logMsg("WARNING: Image '$imageName' not found");
-        $defaultImage = null;
+// Cache for images and groups
+$imageCache = [];
+$groupCache = [];
+
+function getImage($name) {
+    global $imageCache;
+    if (empty($name)) return null;
+    
+    if (!isset($imageCache[$name])) {
+        $images = FOGCore::getClass('ImageManager')->find(['name' => $name]);
+        $imageCache[$name] = ($images && count($images) > 0) ? $images[0] : null;
     }
+    return $imageCache[$name];
 }
 
-// Get default group if specified
-$defaultGroup = null;
-if (!empty($groupName)) {
-    $defaultGroup = FOGCore::getClass('GroupManager')->find(['name' => $groupName]);
-    if ($defaultGroup && count($defaultGroup) > 0) {
-        $defaultGroup = $defaultGroup[0];
-        logMsg("Default group: {$groupName} (ID: {$defaultGroup->get('id')})");
-    } else {
-        logMsg("WARNING: Group '$groupName' not found");
-        $defaultGroup = null;
+function getGroup($name) {
+    global $groupCache;
+    if (empty($name)) return null;
+    
+    if (!isset($groupCache[$name])) {
+        $groups = FOGCore::getClass('GroupManager')->find(['name' => $name]);
+        $groupCache[$name] = ($groups && count($groups) > 0) ? $groups[0] : null;
     }
+    return $groupCache[$name];
 }
 
 // Get pending hosts
@@ -120,41 +204,70 @@ foreach ($pendingHosts as $host) {
     $hostName = $host->get('name');
     $hostMac = $host->get('mac')->__toString();
     
-    // Get inventory for serial number
+    // Get inventory for serial number and model
     $inventory = $host->get('inventory');
     $serial = $inventory ? $inventory->get('sysserial') : '';
     $model = $inventory ? $inventory->get('sysproduct') : '';
+    $manufacturer = $inventory ? $inventory->get('sysman') : '';
     
-    logMsg("Processing: $hostName (MAC: $hostMac, Serial: $serial, Model: $model)");
+    logMsg("Processing: $hostName");
+    logMsg("  MAC: $hostMac");
+    logMsg("  Model: $manufacturer $model");
+    logMsg("  Serial: $serial");
+    
+    // Get image/group based on model
+    $modelConfig = getModelConfig($model);
+    
+    if ($modelConfig['matched']) {
+        logMsg("  Model matched pattern: '{$modelConfig['pattern']}'");
+    } else {
+        logMsg("  No model match, using defaults");
+    }
     
     $result = [
         'id' => $hostId,
         'original_name' => $hostName,
         'mac' => $hostMac,
         'serial' => $serial,
-        'model' => $model,
+        'model' => "$manufacturer $model",
+        'matched_pattern' => $modelConfig['pattern'],
+        'assigned_image' => $modelConfig['image'],
+        'assigned_group' => $modelConfig['group'],
         'actions' => [],
     ];
+    
+    // Get image object
+    $image = getImage($modelConfig['image']);
+    if ($modelConfig['image'] && !$image) {
+        logMsg("  WARNING: Image '{$modelConfig['image']}' not found in FOG");
+    }
+    
+    // Get group object
+    $group = getGroup($modelConfig['group']);
+    if ($modelConfig['group'] && !$group) {
+        logMsg("  WARNING: Group '{$modelConfig['group']}' not found in FOG");
+    }
     
     if (!$isDryRun) {
         // Approve the host
         $host->set('pending', 0);
         
         // Rename to serial number if configured and serial exists
-        if ($config['auto_rename'] && !empty($serial) && $serial !== 'N/A') {
-            // Clean serial for use as hostname
+        if ($config['auto_rename'] && !empty($serial) && $serial !== 'N/A' && $serial !== 'To Be Filled By O.E.M.') {
             $newName = preg_replace('/[^a-zA-Z0-9\-]/', '', $serial);
-            if (!empty($newName)) {
+            if (!empty($newName) && strlen($newName) >= 4) {
                 $host->set('name', $newName);
                 $result['new_name'] = $newName;
                 $result['actions'][] = "Renamed to $newName";
+                logMsg("  -> Renamed to: $newName");
             }
         }
         
-        // Assign default image
-        if ($defaultImage) {
-            $host->set('imageID', $defaultImage->get('id'));
-            $result['actions'][] = "Assigned image: $imageName";
+        // Assign image
+        if ($image) {
+            $host->set('imageID', $image->get('id'));
+            $result['actions'][] = "Assigned image: {$modelConfig['image']}";
+            logMsg("  -> Assigned image: {$modelConfig['image']}");
         }
         
         // Save changes
@@ -162,15 +275,15 @@ foreach ($pendingHosts as $host) {
             $result['status'] = 'approved';
             $result['actions'][] = 'Approved';
             $approved++;
+            logMsg("  -> Approved");
             
             // Add to group (after save)
-            if ($defaultGroup) {
-                $defaultGroup->addHost($hostId);
-                $defaultGroup->save();
-                $result['actions'][] = "Added to group: $groupName";
+            if ($group) {
+                $group->addHost($hostId);
+                $group->save();
+                $result['actions'][] = "Added to group: {$modelConfig['group']}";
+                logMsg("  -> Added to group: {$modelConfig['group']}");
             }
-            
-            logMsg("  -> Approved" . (isset($result['new_name']) ? ", renamed to {$result['new_name']}" : ""));
         } else {
             $result['status'] = 'error';
             $result['error'] = 'Failed to save';
@@ -180,12 +293,22 @@ foreach ($pendingHosts as $host) {
         $result['status'] = 'would_approve';
         $result['actions'][] = 'Would approve (dry run)';
         if ($config['auto_rename'] && !empty($serial)) {
-            $result['actions'][] = "Would rename to: " . preg_replace('/[^a-zA-Z0-9\-]/', '', $serial);
+            $newName = preg_replace('/[^a-zA-Z0-9\-]/', '', $serial);
+            if (!empty($newName) && strlen($newName) >= 4) {
+                $result['actions'][] = "Would rename to: $newName";
+            }
+        }
+        if ($image) {
+            $result['actions'][] = "Would assign image: {$modelConfig['image']}";
+        }
+        if ($group) {
+            $result['actions'][] = "Would add to group: {$modelConfig['group']}";
         }
         $approved++;
     }
     
     $results[] = $result;
+    logMsg("");
 }
 
 $summary = [
@@ -200,4 +323,3 @@ logMsg("Completed: $approved of $count hosts " . ($isDryRun ? "would be " : "") 
 if (php_sapi_name() !== 'cli') {
     echo json_encode($summary, JSON_PRETTY_PRINT);
 }
-
