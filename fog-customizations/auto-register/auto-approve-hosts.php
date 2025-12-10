@@ -23,8 +23,8 @@ $config = [
     'api_key' => 'CHANGE_THIS_TO_A_SECURE_KEY',  // Required for web access
     'auto_rename' => true,      // Rename hosts from MAC to serial number
     'log_file' => '/var/log/fog-auto-approve.log',
-    'default_image' => '',      // Fallback image if no model match (empty = don't assign)
-    'default_group' => '',      // Fallback group if no model match (empty = don't add)
+    'default_image' => 'HP_M01xxxx - 7',  // Fallback image if no model match (14th gen HP)
+    'default_group' => '',                // Fallback group if no model match (empty = don't add)
 ];
 
 // =============================================================================
@@ -77,10 +77,20 @@ $modelMapping = [
     'EliteDesk'         => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
     
     // ===================
-    // LENOVO (add when you have images)
+    // LENOVO (using HP image as fallback until Lenovo images created)
     // ===================
-    // 'ThinkCentre'    => ['image' => 'YOUR_LENOVO_IMAGE', 'group' => ''],
-    // 'ThinkPad'       => ['image' => 'YOUR_LENOVO_IMAGE', 'group' => ''],
+    'ThinkCentre'       => ['image' => 'HP_M01xxxx - 7', 'group' => ''],
+    'ThinkStation'      => ['image' => 'HP_M01xxxx - 7', 'group' => ''],
+    'ThinkPad'          => ['image' => 'HP_M01xxxx - 7', 'group' => ''],
+    'Lenovo'            => ['image' => 'HP_M01xxxx - 7', 'group' => ''],
+    
+    // ===================
+    // FALLBACKS FOR UNKNOWN MODELS
+    // ===================
+    // These catch any Dell/HP that didn't match above
+    'Dell'              => ['image' => 'Dell_3000 - 3', 'group' => ''],
+    'HP'                => ['image' => 'HP_M01xxxx - 7', 'group' => ''],
+    'Hewlett'           => ['image' => 'HP_M01xxxx - 7', 'group' => ''],
 ];
 
 // =============================================================================
