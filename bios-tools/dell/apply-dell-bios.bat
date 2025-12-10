@@ -95,6 +95,18 @@ if %errorlevel% neq 0 (
 )
 echo.
 
+echo Step 4b: Setting Boot Mode to UEFI ^(not Legacy^)...
+"%CCTK%" --BootMode=Uefi %PWD_ARG%
+if %errorlevel% neq 0 (
+    REM Try alternative parameter names
+    "%CCTK%" --LegacyOrom=Disabled %PWD_ARG%
+    "%CCTK%" --BootList=Uefi %PWD_ARG%
+    echo Note: Boot mode settings applied ^(may require reboot^)
+) else (
+    echo SUCCESS: Boot Mode set to UEFI
+)
+echo.
+
 echo Step 5: Setting Boot Order ^(NIC First^)...
 REM Get current boot order to understand available devices
 "%CCTK%" --BootOrder

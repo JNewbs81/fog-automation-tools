@@ -50,9 +50,21 @@ Fast Boot
 Network Boot Retry
 	*Enable
 
-; Boot Mode - UEFI Native (required for modern imaging)
+; Boot Mode - UEFI Native (required for modern imaging, disables Legacy/CSM)
 Boot Mode
 	*UEFI Native (Without CSM)
+
+; Disable Legacy Boot / CSM
+Legacy Boot Options
+	*Disable
+
+; Ensure CSM is disabled
+CSM Support
+	*Disable
+
+; UEFI Boot Order
+UEFI Boot Mode
+	*Enable
 
 ; After Power Loss - ensure system can be powered on remotely
 After Power Loss
