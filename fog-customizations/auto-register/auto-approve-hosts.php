@@ -41,42 +41,46 @@ $config = [
 //   'Latitude'      => ['image' => 'Win11-Laptop', 'group' => 'Laptops']
 
 $modelMapping = [
-    // Dell Desktop
-    'OptiPlex 3050'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
-    'OptiPlex 3060'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
-    'OptiPlex 3070'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
-    'OptiPlex 3080'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
-    'OptiPlex 5050'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
-    'OptiPlex 7050'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
-    'OptiPlex 7060'     => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
-    'OptiPlex'          => ['image' => 'Windows11-PC', 'group' => 'Dell-Desktops'],
+    // ===================
+    // DELL DESKTOPS
+    // ===================
+    'OptiPlex 3050'     => ['image' => 'Dell_3050_Win11 - 11', 'group' => ''],
+    'OptiPlex 3060'     => ['image' => 'Dell_3060 - 9', 'group' => ''],
+    'OptiPlex 3070'     => ['image' => 'Dell_3070 - 5', 'group' => ''],
+    'OptiPlex 3090'     => ['image' => 'Dell_3090 - 6', 'group' => ''],
+    'OptiPlex 5080'     => ['image' => 'Dell_5080 - 8', 'group' => ''],
+    'OptiPlex 3000'     => ['image' => 'Dell_3000 - 3', 'group' => ''],
     
-    // Dell Workstation
-    'Precision 5820'    => ['image' => 'Windows11-Workstation', 'group' => 'Dell-Workstations'],
-    'Precision 7820'    => ['image' => 'Windows11-Workstation', 'group' => 'Dell-Workstations'],
-    'Precision Tower'   => ['image' => 'Windows11-Workstation', 'group' => 'Dell-Workstations'],
-    'Precision'         => ['image' => 'Windows11-Workstation', 'group' => 'Dell-Workstations'],
+    // Fallback for other OptiPlex models - uses 3050 image
+    'OptiPlex'          => ['image' => 'Dell_3050_Win11 - 11', 'group' => ''],
     
-    // Dell Laptop
-    'Latitude'          => ['image' => 'Windows11-Laptop', 'group' => 'Dell-Laptops'],
+    // ===================
+    // DELL WORKSTATIONS
+    // ===================
+    'Precision 5820'    => ['image' => '5820 - 1', 'group' => ''],
+    'Precision Tower'   => ['image' => '5820 - 1', 'group' => ''],
+    'Precision'         => ['image' => '5820 - 1', 'group' => ''],
     
-    // HP Desktop
-    'EliteDesk 705 G4'  => ['image' => 'Windows11-PC', 'group' => 'HP-Desktops'],
-    'EliteDesk 800'     => ['image' => 'Windows11-PC', 'group' => 'HP-Desktops'],
-    'EliteDesk'         => ['image' => 'Windows11-PC', 'group' => 'HP-Desktops'],
-    'ProDesk'           => ['image' => 'Windows11-PC', 'group' => 'HP-Desktops'],
+    // ===================
+    // HP DESKTOPS
+    // ===================
+    // HP EliteDesk 705 G4 (the mini/micro form factor)
+    'EliteDesk 705 G4'  => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
+    'EliteDesk 705'     => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
     
-    // HP Laptop
-    'EliteBook'         => ['image' => 'Windows11-Laptop', 'group' => 'HP-Laptops'],
-    'ProBook'           => ['image' => 'Windows11-Laptop', 'group' => 'HP-Laptops'],
-    'ZBook'             => ['image' => 'Windows11-Workstation', 'group' => 'HP-Workstations'],
+    // HP M01 series
+    'HP M01'            => ['image' => 'HP_M01xxxx - 7', 'group' => ''],
+    'M01'               => ['image' => 'HP_M01xxxx - 7', 'group' => ''],
     
-    // Lenovo Desktop
-    'ThinkCentre'       => ['image' => 'Windows11-PC', 'group' => 'Lenovo-Desktops'],
-    'ThinkStation'      => ['image' => 'Windows11-Workstation', 'group' => 'Lenovo-Workstations'],
+    // HP White/other models
+    'ProDesk'           => ['image' => 'HP_White - 4', 'group' => ''],
+    'EliteDesk'         => ['image' => 'HP_Micro_W11 - 10', 'group' => ''],
     
-    // Lenovo Laptop
-    'ThinkPad'          => ['image' => 'Windows11-Laptop', 'group' => 'Lenovo-Laptops'],
+    // ===================
+    // LENOVO (add when you have images)
+    // ===================
+    // 'ThinkCentre'    => ['image' => 'YOUR_LENOVO_IMAGE', 'group' => ''],
+    // 'ThinkPad'       => ['image' => 'YOUR_LENOVO_IMAGE', 'group' => ''],
 ];
 
 // =============================================================================
