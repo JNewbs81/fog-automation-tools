@@ -51,6 +51,11 @@ Write-Host "  Mounted successfully" -ForegroundColor Green
 Write-Host ""
 Write-Host "Step 2: Copying BIOS tools into WinPE..." -ForegroundColor Yellow
 $BiosToolsDest = "$MountPath\bios-tools"
+# Remove old bios-tools folder if it exists to ensure fresh copy
+if (Test-Path $BiosToolsDest) {
+    Remove-Item -Path $BiosToolsDest -Recurse -Force
+    Write-Host "  Removed old bios-tools folder" -ForegroundColor Gray
+}
 Copy-Item -Path $BiosToolsSource -Destination $BiosToolsDest -Recurse -Force
 Write-Host "  Copied to $BiosToolsDest" -ForegroundColor Green
 

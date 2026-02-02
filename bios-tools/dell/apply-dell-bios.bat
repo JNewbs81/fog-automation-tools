@@ -5,8 +5,12 @@ REM Download from: https://www.dell.com/support/kbdoc/en-us/000178000/dell-comma
 REM
 REM Settings applied:
 REM   - Secure Boot: Disabled
-REM   - IPv4 PXE Boot: Enabled
+REM   - Boot List Type: UEFI (not Legacy)
+REM   - Legacy Option ROM: Disabled
+REM   - UEFI Network Stack: Enabled
+REM   - Embedded NIC: Enabled with IPv4 PXE
 REM   - SATA Operation: AHCI (not RAID)
+REM   - Warnings and Errors: Continue (no prompts)
 REM   - Boot Order: NIC first
 
 setlocal enabledelayedexpansion
@@ -99,7 +103,34 @@ if %errorlevel% neq 0 (
 )
 echo.
 
-echo Step 2: Enabling Embedded NIC...
+echo Step 2: Setting Boot List Type to UEFI...
+"%CCTK%" bootorder --BootListType=uefi %PWD_ARG%
+if %errorlevel% neq 0 (
+    echo WARNING: Failed to set Boot List Type to UEFI
+) else (
+    echo SUCCESS: Boot List Type set to UEFI
+)
+echo.
+
+echo Step 3: Disabling Legacy Option ROM...
+"%CCTK%" --LegacyOrom=Disabled %PWD_ARG%
+if %errorlevel% neq 0 (
+    echo WARNING: Failed to disable Legacy Option ROM ^(may not be supported on this model^)
+) else (
+    echo SUCCESS: Legacy Option ROM disabled
+)
+echo.
+
+echo Step 4: Enabling UEFI Network Stack...
+"%CCTK%" --UefiNwStack=Enabled %PWD_ARG%
+if %errorlevel% neq 0 (
+    echo WARNING: UEFI Network Stack setting not available on this model
+) else (
+    echo SUCCESS: UEFI Network Stack enabled
+)
+echo.
+
+echo Step 5: Enabling Embedded NIC...
 "%CCTK%" --EmbNic1=Enabled %PWD_ARG%
 if %errorlevel% neq 0 (
     echo WARNING: Failed to enable Embedded NIC
@@ -108,23 +139,22 @@ if %errorlevel% neq 0 (
 )
 echo.
 
-echo Step 3: Enabling IPv4 PXE Boot on NIC...
+echo Step 6: Enabling IPv4 PXE Boot on NIC...
 "%CCTK%" --EmbNic1Ipv4=Enabled %PWD_ARG%
 if %errorlevel% neq 0 (
     REM Try alternative parameter names for different Dell models
-    "%CCTK%" --EmbNic1BootProto=PXE %PWD_ARG%
+    "%CCTK%" --Nic1Ipv4PxeBoot=Enabled %PWD_ARG%
     if %errorlevel% neq 0 (
-        "%CCTK%" --LegacyOrom=Enabled %PWD_ARG%
-        echo WARNING: Used fallback PXE settings
+        echo WARNING: Could not enable IPv4 PXE Boot ^(may not be supported or already enabled^)
     ) else (
-        echo SUCCESS: NIC Boot Protocol set to PXE
+        echo SUCCESS: IPv4 PXE Boot enabled ^(alternate parameter^)
     )
 ) else (
     echo SUCCESS: IPv4 PXE Boot enabled
 )
 echo.
 
-echo Step 4: Setting SATA Operation to AHCI...
+echo Step 7: Setting SATA Operation to AHCI...
 "%CCTK%" --EmbSataRaid=Ahci %PWD_ARG%
 if %errorlevel% neq 0 (
     REM Try alternative parameter for different models
@@ -139,45 +169,42 @@ if %errorlevel% neq 0 (
 )
 echo.
 
-echo Step 4b: Setting Boot Mode to UEFI ^(not Legacy^)...
-"%CCTK%" --BootMode=Uefi %PWD_ARG%
+echo Step 8: Disabling Warnings and Errors prompts...
+"%CCTK%" --WarningsAndErr=ContWrnErr %PWD_ARG%
 if %errorlevel% neq 0 (
-    REM Try alternative parameter names
-    "%CCTK%" --LegacyOrom=Disabled %PWD_ARG%
-    "%CCTK%" --BootList=Uefi %PWD_ARG%
-    echo Note: Boot mode settings applied ^(may require reboot^)
+    echo WARNING: Warnings and Errors setting not available on this model
 ) else (
-    echo SUCCESS: Boot Mode set to UEFI
+    echo SUCCESS: Warnings and Errors set to Continue
 )
 echo.
 
-echo Step 5: Setting Boot Order ^(NIC First^)...
+echo Step 9: Setting Boot Order ^(NIC First^)...
 REM Get current boot order to understand available devices
-"%CCTK%" --BootOrder
+echo Current boot order:
+"%CCTK%" bootorder
 echo.
 
-REM Try to set NIC as first boot device
-"%CCTK%" --BootOrder=EmbNic1 %PWD_ARG%
+REM Enable NIC in boot list and set sequence
+"%CCTK%" bootorder --EnableDevice=EmbNic1 %PWD_ARG%
 if %errorlevel% neq 0 (
-    REM Try with full boot sequence
-    "%CCTK%" --BootOrder=EmbNic1,hdd,usbdev %PWD_ARG%
+    echo WARNING: Could not enable NIC in boot order
+) else (
+    echo SUCCESS: NIC enabled in boot order
+)
+
+REM Try to set NIC as first boot device
+"%CCTK%" bootorder --Sequence=EmbNic1 %PWD_ARG%
+if %errorlevel% neq 0 (
+    REM Try with full boot sequence including common device names
+    "%CCTK%" bootorder --Sequence=EmbNic1,hdd %PWD_ARG%
     if %errorlevel% neq 0 (
-        echo WARNING: Could not modify boot order automatically
-        echo You may need to set boot order manually or use --bootorder with correct device names
+        echo WARNING: Could not modify boot sequence automatically
+        echo You may need to set boot order manually in BIOS
     ) else (
-        echo SUCCESS: Boot order set ^(NIC, HDD, USB^)
+        echo SUCCESS: Boot sequence set ^(NIC, HDD^)
     )
 ) else (
     echo SUCCESS: NIC set as first boot device
-)
-echo.
-
-echo Step 6: Enabling UEFI Network Stack...
-"%CCTK%" --UefiNwStack=Enabled %PWD_ARG%
-if %errorlevel% neq 0 (
-    echo WARNING: UEFI Network Stack setting not available on this model
-) else (
-    echo SUCCESS: UEFI Network Stack enabled
 )
 echo.
 
@@ -187,8 +214,13 @@ echo ============================================
 echo.
 echo Current BIOS Settings:
 "%CCTK%" --SecureBoot
+"%CCTK%" --UefiNwStack
 "%CCTK%" --EmbNic1
+"%CCTK%" --WarningsAndErr
 "%CCTK%" --EmbSataRaid 2>nul || "%CCTK%" --SataOperation 2>nul
+echo.
+echo Boot Order:
+"%CCTK%" bootorder
 echo.
 echo The system will reboot in 10 seconds to apply changes...
 echo Press Ctrl+C to cancel reboot.
@@ -196,4 +228,3 @@ echo.
 
 timeout /t 10
 shutdown /r /t 0 /f
-

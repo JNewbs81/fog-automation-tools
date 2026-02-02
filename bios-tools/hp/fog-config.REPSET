@@ -9,10 +9,10 @@ BIOSConfig 1.0
 ;   - Boot Order: Network first
 ;
 
-; Secure Boot Configuration - Method 1 (older format)
+; Secure Boot Configuration - Disable Secure Boot but keep UEFI mode
 Secure Boot Configuration
 	Configure Legacy Support and Secure Boot
-		*Legacy Support Enable and Secure Boot Disable
+		*Legacy Support Disable and Secure Boot Disable
 
 ; Secure Boot - Method 2 (newer format)
 SecureBoot

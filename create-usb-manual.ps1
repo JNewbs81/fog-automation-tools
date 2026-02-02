@@ -42,6 +42,7 @@ select partition 1
 active
 format fs=fat32 quick label="WINPE_FOG"
 assign letter=$USBDriveLetter
+exit
 "@
 
 $scriptPath = "$env:TEMP\diskpart_usb.txt"

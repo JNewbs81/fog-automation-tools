@@ -15,13 +15,12 @@ echo HP BIOS Configuration for FOG Imaging
 echo ============================================
 echo.
 
-REM Check for BCU in common locations
+REM Check for BCU 64-bit in common locations (64-bit only)
 set "BCU="
 if exist "%~dp0BiosConfigUtility64.exe" set "BCU=%~dp0BiosConfigUtility64.exe"
-if exist "%~dp0BiosConfigUtility.exe" set "BCU=%~dp0BiosConfigUtility.exe"
-if exist "C:\Program Files (x86)\HP\BIOS Configuration Utility\BiosConfigUtility64.exe" set "BCU=C:\Program Files (x86)\HP\BIOS Configuration Utility\BiosConfigUtility64.exe"
-if exist "C:\Program Files\HP\BIOS Configuration Utility\BiosConfigUtility64.exe" set "BCU=C:\Program Files\HP\BIOS Configuration Utility\BiosConfigUtility64.exe"
-if exist "X:\HP\BiosConfigUtility64.exe" set "BCU=X:\HP\BiosConfigUtility64.exe"
+if "%BCU%"=="" if exist "C:\Program Files\HP\BIOS Configuration Utility\BiosConfigUtility64.exe" set "BCU=C:\Program Files\HP\BIOS Configuration Utility\BiosConfigUtility64.exe"
+if "%BCU%"=="" if exist "C:\Program Files (x86)\HP\BIOS Configuration Utility\BiosConfigUtility64.exe" set "BCU=C:\Program Files (x86)\HP\BIOS Configuration Utility\BiosConfigUtility64.exe"
+if "%BCU%"=="" if exist "X:\HP\BiosConfigUtility64.exe" set "BCU=X:\HP\BiosConfigUtility64.exe"
 
 if "%BCU%"=="" (
     echo ERROR: HP BIOS Configuration Utility not found!
@@ -71,15 +70,28 @@ echo ; >> "%TEMPCONFIG%"
 echo ; HP BIOS Configuration for FOG Imaging >> "%TEMPCONFIG%"
 echo ; >> "%TEMPCONFIG%"
 
-REM Secure Boot Configuration
+REM Secure Boot Configuration - Disable Secure Boot, UEFI mode only (no Legacy)
 echo. >> "%TEMPCONFIG%"
 echo Secure Boot Configuration >> "%TEMPCONFIG%"
 echo 	Configure Legacy Support and Secure Boot >> "%TEMPCONFIG%"
-echo 		*Legacy Support Enable and Secure Boot Disable >> "%TEMPCONFIG%"
+echo 		*Legacy Support Disable and Secure Boot Disable >> "%TEMPCONFIG%"
 echo. >> "%TEMPCONFIG%"
 
 REM Alternative Secure Boot setting format for newer systems
 echo SecureBoot >> "%TEMPCONFIG%"
+echo 	*Disable >> "%TEMPCONFIG%"
+echo. >> "%TEMPCONFIG%"
+
+REM Boot Mode - UEFI Native only, disable CSM/Legacy
+echo Boot Mode >> "%TEMPCONFIG%"
+echo 	*UEFI Native (Without CSM) >> "%TEMPCONFIG%"
+echo. >> "%TEMPCONFIG%"
+
+echo Legacy Boot Options >> "%TEMPCONFIG%"
+echo 	*Disable >> "%TEMPCONFIG%"
+echo. >> "%TEMPCONFIG%"
+
+echo CSM Support >> "%TEMPCONFIG%"
 echo 	*Disable >> "%TEMPCONFIG%"
 echo. >> "%TEMPCONFIG%"
 
