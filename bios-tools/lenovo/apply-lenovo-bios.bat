@@ -97,5 +97,7 @@ echo The system will reboot in 10 seconds to apply changes...
 echo Press Ctrl+C to cancel reboot.
 echo.
 
-timeout /t 10
-shutdown /r /t 0 /f
+REM Use ping for delay (WinPE doesn't have timeout command)
+ping -n 11 127.0.0.1 >nul
+REM Use wpeutil for reboot (WinPE doesn't have shutdown command)
+wpeutil reboot

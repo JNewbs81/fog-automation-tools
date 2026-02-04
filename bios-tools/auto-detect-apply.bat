@@ -11,19 +11,17 @@ echo FOG BIOS Auto-Configuration Tool
 echo ============================================
 echo.
 
-REM Detect manufacturer using WMIC
-for /f "tokens=2 delims==" %%a in ('wmic computersystem get manufacturer /value 2^>nul ^| find "="') do (
-    set "MANUFACTURER=%%a"
+REM Detect manufacturer using registry (WMIC not available in WinPE)
+set "MANUFACTURER="
+for /f "tokens=2*" %%a in ('reg query "HKLM\HARDWARE\DESCRIPTION\System\BIOS" /v SystemManufacturer 2^>nul ^| find "REG_SZ"') do (
+    set "MANUFACTURER=%%b"
 )
-
-REM Remove trailing whitespace/CR
-set "MANUFACTURER=%MANUFACTURER: =%"
 
 echo Detected Manufacturer: %MANUFACTURER%
 echo.
 
 REM Route to appropriate vendor script
-echo %MANUFACTURER% | findstr /i "Dell" >nul
+echo %MANUFACTURER% | find /i "Dell" >nul
 if %errorlevel% equ 0 (
     echo Detected DELL system - running Dell CCTK configuration...
     echo.
@@ -37,21 +35,27 @@ if %errorlevel% equ 0 (
     goto :end
 )
 
-echo %MANUFACTURER% | findstr /i "HP Hewlett" >nul
-if %errorlevel% equ 0 (
-    echo Detected HP system - running HP BCU configuration...
-    echo.
-    if exist "%~dp0hp\apply-hp-bios.bat" (
-        call "%~dp0hp\apply-hp-bios.bat"
-    ) else (
-        echo ERROR: HP configuration script not found at %~dp0hp\apply-hp-bios.bat
-        pause
-        exit /b 1
-    )
-    goto :end
-)
+echo %MANUFACTURER% | find /i "HP" >nul
+if %errorlevel% equ 0 goto :run_hp
+echo %MANUFACTURER% | find /i "Hewlett" >nul
+if %errorlevel% equ 0 goto :run_hp
+goto :check_lenovo
 
-echo %MANUFACTURER% | findstr /i "Lenovo" >nul
+:run_hp
+echo Detected HP system - running HP BCU configuration...
+echo.
+if exist "%~dp0hp\apply-hp-bios.bat" (
+    call "%~dp0hp\apply-hp-bios.bat"
+) else (
+    echo ERROR: HP configuration script not found at %~dp0hp\apply-hp-bios.bat
+    pause
+    exit /b 1
+)
+goto :end
+
+:check_lenovo
+
+echo %MANUFACTURER% | find /i "Lenovo" >nul
 if %errorlevel% equ 0 (
     echo Detected LENOVO system - running Lenovo SRSETUP configuration...
     echo.

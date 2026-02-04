@@ -46,9 +46,13 @@ if exist "%~dp0bios_password.txt" (
     )
 )
 
+REM ============================================
+REM Apply comprehensive BIOS configuration
+REM All settings explicitly defined - no reset to defaults needed
+REM ============================================
 REM Check if REPSET file exists (preferred method)
 if exist "%~dp0fog-config.REPSET" (
-    echo Using REPSET configuration file...
+    echo Applying REPSET configuration file...
     "%BCU%" /setconfig:"%~dp0fog-config.REPSET" %PWD_ARG%
     if %errorlevel% neq 0 (
         echo WARNING: REPSET application had issues. Trying individual settings...
@@ -133,11 +137,12 @@ set "EXPORTCONFIG=%TEMP%\hp_current_config.txt"
 "%BCU%" /getconfig:"%EXPORTCONFIG%"
 
 echo Checking Secure Boot status...
-findstr /i "Secure Boot" "%EXPORTCONFIG%"
+find /i "Secure Boot" "%EXPORTCONFIG%"
 echo.
 
 echo Checking Network Boot status...
-findstr /i "Network.*Boot\|PXE" "%EXPORTCONFIG%"
+find /i "Network" "%EXPORTCONFIG%"
+find /i "PXE" "%EXPORTCONFIG%"
 echo.
 
 echo ============================================
@@ -150,6 +155,8 @@ echo The system will reboot in 10 seconds to apply changes...
 echo Press Ctrl+C to cancel reboot.
 echo.
 
-timeout /t 10
-shutdown /r /t 0 /f
+REM Use ping for delay (WinPE doesn't have timeout command)
+ping -n 11 127.0.0.1 >nul
+REM Use wpeutil for reboot (WinPE doesn't have shutdown command)
+wpeutil reboot
 

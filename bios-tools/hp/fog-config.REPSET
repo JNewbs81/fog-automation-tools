@@ -1,84 +1,236 @@
 BIOSConfig 1.0
 ;
-; HP BIOS Configuration for FOG Imaging
-; Compatible with HP EliteDesk 705 G4 and similar models
-;
-; Settings:
-;   - Secure Boot: Disabled (with Legacy Support)
-;   - Network/PXE Boot: Enabled
-;   - Boot Order: Network first
+; HP EliteDesk 705 G4 DM - Working FOG Configuration
+; Exported from correctly configured unit
 ;
 
-; Secure Boot Configuration - Disable Secure Boot but keep UEFI mode
-Secure Boot Configuration
-	Configure Legacy Support and Secure Boot
-		*Legacy Support Disable and Secure Boot Disable
-
-; Secure Boot - Method 2 (newer format)
-SecureBoot
+Lock BIOS Version
 	*Disable
+	Enable
 
-; Enable PXE/Network Boot
-Network (PXE) Boot
+Native OS Firmware Update Service
+	Disable
 	*Enable
 
-; Alternative network boot setting
-Network Boot
-	*Enable
+BIOS Rollback Policy
+	*Unrestricted Rollback to older BIOS
+	Restricted Rollback to older BIOS
 
-; IPv4 PXE Configuration
-IPv4 PXE Boot
-	*Enable
-
-; Network Boot Configuration
-Network Boot Configuration
-	IPv4
-		*Enable
-	IPv6
-		Disable
-
-; UEFI Boot Sources
-UEFI Boot Sources
-	Network Adapter
-		*Enabled
-
-; Fast Boot - Disable for PXE reliability
 Fast Boot
 	*Disable
+	Enable
 
-; Network Boot Retry
-Network Boot Retry
+Audio Alerts During Boot
+	Disable
 	*Enable
 
-; Boot Mode - UEFI Native (required for modern imaging, disables Legacy/CSM)
-Boot Mode
-	*UEFI Native (Without CSM)
-
-; Disable Legacy Boot / CSM
-Legacy Boot Options
-	*Disable
-
-; Ensure CSM is disabled
-CSM Support
-	*Disable
-
-; UEFI Boot Order
-UEFI Boot Mode
-	*Enable
-
-; After Power Loss - ensure system can be powered on remotely
 After Power Loss
+	Power Off
+	Power On
 	*Previous State
 
-; Wake on LAN
-Wake on LAN
+NumLock on at boot
+	Disable
+	*Enable
+
+USB Storage Boot
+	Disable
+	*Enable
+
+Prompt on Memory Size Change
+	Disable
+	*Enable
+
+Network (PXE) Boot
+	Disable
+	*Enable
+
+IPv6 during UEFI Boot
+	*Disable
+	Enable
+
+Prompt on Fixed Storage Change
+	*Disable
+	Enable
+
+Legacy Boot Options
+	*Disable
+	Enable
+
+UEFI Boot Options
+	Disable
+	*Enable
+
+UEFI Boot Order
+	HDD:M.2:1
+	NETWORK IPV4:EMBEDDED:1
+	HDD:USB:1
+
+SVM CPU Virtualization
+	Disable
+	*Enable
+
+Configure Legacy Support and Secure Boot
+	Legacy Support Enable and Secure Boot Disable
+	Legacy Support Disable and Secure Boot Enable
+	*Legacy Support Disable and Secure Boot Disable
+
+Import Custom Secure Boot keys
+	*Do Nothing
+	On next boot
+
+Clear Secure Boot keys
+	*Disable
+	Enable
+
+Reset Secure Boot keys to factory defaults
+	*Disable
+	Enable
+
+Enable MS UEFI CA key
+	No
+	*Yes
+
+Ready to disable MS UEFI CA Key
+	Not Ready
+	*Ready
+
+Ready BIOS for Device Guard Use
+	*Do Nothing
+	Configure on Next Boot
+	Clear Configuration on Next Boot
+
+HP Application Driver
+	*Disable
+	Enable
+
+M.2 USB / Bluetooth
+	Disable
+	*Enable
+
+Audio Device
+	Disable
+	*Enable
+
+Embedded LAN controller
+	Disable
+	*Enable
+
+Wake On LAN
+	Disabled
+	Boot to Network
 	*Boot to Hard Drive
+	Boot to Normal Boot Order
 
-; S5 Wake on LAN
-S5 Wake on LAN
+Internal Speakers
+	Disable
 	*Enable
 
-; Runtime Power Management
-Runtime Power Management - S4/S5 Wake on LAN
+Runtime Power Management
+	Disable
 	*Enable
+
+Extended Idle Power States
+	Disable
+	*Enable
+
+S5 Maximum Power Savings
+	*Disable
+	Enable
+
+LAN / WLAN Auto Switching
+	*Disable
+	Enable
+
+PCI Express Power Management
+	Disable
+	*Enable
+
+Wake on WLAN
+	*Disable
+	Enable
+
+SATA Power Management
+	Disable
+	*Enable
+
+M.2 SSD
+	Disable
+	*Enable
+
+Video Memory Size
+	*Auto
+	128 MB
+	256 MB
+	512 MB
+
+Power On from Keyboard Ports
+	*Disable
+	Enable
+
+Power Button Override
+	Disable
+	*4 sec
+	15 sec
+	30 sec
+
+USB Legacy Port Charging
+	Disable
+	*Enable
+
+Front USB Type-C Downstream Charging
+	Disable
+	*Enable
+
+Front USB Ports
+	Disable
+	*Enable
+
+Rear USB Ports
+	Disable
+	*Enable
+
+Configure Option ROM Launch Policy
+	All Legacy
+	*All UEFI
+	All UEFI Except Video
+
+SATA0
+	Disable
+	*Enable
+
+Update Source
+	*HP
+	Custom
+
+Automatically Check for Updates
+	Daily
+	Weekly
+	*Monthly
+
+Automatic BIOS Update Setting
+	*Disable
+	Let user decide whether to install updates
+	Install all updates automatically
+	Install only important updates automatically
+
+Force Check on Reboot
+	*Disable
+	Enable
+
+Update BIOS via Network
+	Disable
+	*Enable
+
+Use Proxy
+	*Disable
+	Enable
+
+DNS Configuration
+	*Automatic
+	Manual
+
+IPv4 Configuration
+	*Automatic
+	Manual
 
