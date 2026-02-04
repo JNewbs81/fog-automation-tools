@@ -103,6 +103,35 @@ echo Boot Order:
 "%CCTK%" bootorder
 echo.
 
+REM ============================================
+REM Verify Secure Boot is Disabled (T5820 fix)
+REM ============================================
+echo Verifying Secure Boot is disabled...
+"%CCTK%" --SecureBoot >nul 2>&1
+for /f "tokens=*" %%a in ('"%CCTK%" --SecureBoot 2^>nul') do set "SECUREBOOT_STATUS=%%a"
+
+echo   Current status: %SECUREBOOT_STATUS%
+
+echo %SECUREBOOT_STATUS% | findstr /i "Enabled" >nul
+if %errorlevel% equ 0 (
+    echo.
+    echo   WARNING: Secure Boot still enabled! Retrying...
+    echo.
+    "%CCTK%" --SecureBoot=Disabled
+    ping -n 3 127.0.0.1 >nul
+    "%CCTK%" --SecureBoot=Disabled
+    ping -n 3 127.0.0.1 >nul
+    "%CCTK%" --SecureBoot=Disabled
+    
+    echo.
+    echo   Verifying again...
+    "%CCTK%" --SecureBoot
+    echo.
+) else (
+    echo   OK - Secure Boot is disabled.
+    echo.
+)
+
 echo ============================================
 echo Rebooting to PXE in 10 seconds...
 echo Press Ctrl+C to cancel
