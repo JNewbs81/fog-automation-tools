@@ -1,0 +1,378 @@
+.script-generator {
+  background: var(--dark);
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.generator-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.generator-header h2 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.generator-header p {
+  color: var(--gray);
+  font-size: 15px;
+}
+
+/* Progress Steps */
+.progress-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.4;
+  transition: opacity 0.3s;
+}
+
+.progress-step.active {
+  opacity: 1;
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.progress-step.active .step-num {
+  background: var(--primary);
+}
+
+.step-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.step-line {
+  width: 40px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Upload Zone */
+.upload-zone {
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.upload-zone:hover {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  cursor: pointer;
+}
+
+.upload-icon {
+  font-size: 48px;
+}
+
+.upload-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.upload-text strong {
+  font-size: 16px;
+}
+
+.upload-text span {
+  color: var(--gray);
+  font-size: 13px;
+}
+
+.upload-formats {
+  font-size: 12px;
+  color: var(--gray);
+  margin-top: 8px;
+}
+
+/* Or Divider */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.or-divider span {
+  font-size: 13px;
+  color: var(--gray);
+}
+
+/* Quick Options */
+.quick-options {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.vendor-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vendor-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.vendor-btn.dell { border-color: var(--dell); color: var(--dell); }
+.vendor-btn.hp { border-color: var(--hp); color: var(--hp); }
+.vendor-btn.lenovo { border-color: var(--lenovo); color: var(--lenovo); }
+.vendor-btn.auto { border-color: var(--accent); color: var(--accent); }
+
+/* File Info */
+.file-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.file-icon {
+  color: var(--success);
+}
+
+.file-name {
+  font-weight: 500;
+}
+
+.file-size {
+  color: var(--gray);
+  font-size: 13px;
+}
+
+/* Config Options */
+.config-options {
+  max-width: 400px;
+  margin: 0 auto 32px;
+}
+
+.option-group {
+  margin-bottom: 20px;
+}
+
+.option-group > label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--light-gray);
+  margin-bottom: 8px;
+}
+
+.vendor-select {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vendor-chip {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: var(--light-gray);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vendor-chip:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.vendor-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.checkbox-label input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+/* Step Actions */
+.step-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Script Preview */
+.script-preview {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  font-size: 13px;
+  color: var(--gray);
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.preview-code {
+  padding: 16px;
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--success);
+  max-height: 250px;
+  overflow: auto;
+  margin: 0;
+}
+
+/* Download Actions */
+.download-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.btn-lg {
+  padding: 14px 28px;
+  font-size: 15px;
+}
+
+/* Next Steps */
+.next-steps {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.next-steps h4 {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: var(--accent);
+}
+
+.next-steps ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.next-steps li {
+  font-size: 13px;
+  color: var(--light-gray);
+  margin-bottom: 6px;
+}
+
+.next-steps code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.next-steps a {
+  color: var(--accent);
+}
+
+/* Generator Step */
+.generator-step {
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .script-generator {
+    padding: 20px;
+  }
+  
+  .progress-steps {
+    gap: 8px;
+  }
+  
+  .step-label {
+    display: none;
+  }
+  
+  .step-line {
+    width: 24px;
+  }
+  
+  .quick-options {
+    flex-direction: column;
+  }
+  
+  .vendor-btn {
+    width: 100%;
+  }
+}
