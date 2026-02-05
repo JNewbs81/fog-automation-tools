@@ -1,0 +1,3 @@
+# HP BIOS config files (.REPSET)
+# Place model-specific configs here, e.g., elitedesk-800-g5.REPSET
+# Create a default.REPSET for fallback

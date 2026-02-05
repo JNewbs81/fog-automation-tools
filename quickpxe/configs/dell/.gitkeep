@@ -1,0 +1,3 @@
+# Dell BIOS config files (.cctk)
+# Place model-specific configs here, e.g., optiplex-7040.cctk
+# Create a default.cctk for fallback
