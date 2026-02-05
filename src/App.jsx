@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { AuthProvider } from './components/AuthProvider'
+import { LoginButton } from './components/LoginButton'
+import { ScriptEditor } from './components/ScriptEditor'
 import './App.css'
 
-function App() {
+function AppContent() {
   const [copied, setCopied] = useState(false)
 
   const copyCode = () => {
@@ -34,11 +37,10 @@ copype amd64 C:\\WinPE_QuickPXE
           </a>
           <div className="nav-links">
             <a href="#features">Features</a>
+            <a href="#editor">Script Editor</a>
             <a href="#downloads">Downloads</a>
             <a href="#quickstart">Quick Start</a>
-            <a href="https://github.com/JNewbs81/fog-automation-tools" target="_blank" rel="noopener noreferrer" className="btn btn-outline">
-              ⭐ GitHub
-            </a>
+            <LoginButton />
           </div>
         </div>
       </nav>
@@ -164,6 +166,17 @@ copype amd64 C:\\WinPE_QuickPXE
               <p>Used on thousands of PCs. Handles edge cases gracefully.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Script Editor Section */}
+      <section className="editor-section" id="editor">
+        <div className="container">
+          <div className="section-header">
+            <h2 className="section-title">Script Editor</h2>
+            <p className="section-subtitle">Customize your QuickPXE startup scripts. Sign in to save and manage your own scripts.</p>
+          </div>
+          <ScriptEditor />
         </div>
       </section>
 
@@ -368,6 +381,15 @@ copype amd64 C:\\WinPE_QuickPXE
         </div>
       </footer>
     </div>
+  )
+}
+
+// Wrap with AuthProvider
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   )
 }
 

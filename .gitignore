@@ -1,3 +1,9 @@
+# Environment files
+.env
+.env.local
+.env.production.local
+api/local.settings.json
+
 # Logs
 logs
 *.log

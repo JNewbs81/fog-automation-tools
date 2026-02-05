@@ -1,0 +1,8 @@
+{
+  "name": "quickpxe-api",
+  "version": "1.0.0",
+  "description": "QuickPXE Azure Functions API",
+  "dependencies": {
+    "@azure/cosmos": "^4.0.0"
+  }
+}
