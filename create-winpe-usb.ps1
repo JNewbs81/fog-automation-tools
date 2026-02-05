@@ -62,38 +62,14 @@ Write-Host "  Copied to $BiosToolsDest" -ForegroundColor Green
 Write-Host ""
 Write-Host "Step 3: Creating auto-run startup script..." -ForegroundColor Yellow
 
-# Create the startup script that runs automatically
-$StartnetContent = @"
-wpeinit
-@echo off
-cls
-color 0A
-echo.
-echo  =====================================================
-echo   FOG BIOS Configuration Tool - Automated Setup
-echo  =====================================================
-echo.
-echo   This will automatically configure BIOS settings:
-echo     - Disable Secure Boot
-echo     - Enable UEFI Mode (disable Legacy/CSM)
-echo     - Enable IPv4 PXE Boot
-echo     - Set SATA to AHCI (Dell only)
-echo     - Set Network as first boot device
-echo.
-echo   System will reboot to PXE after configuration.
-echo.
-echo  =====================================================
-echo.
-timeout /t 5 /nobreak
+# Copy the server-based startup script
+$StartnetSource = "$PSScriptRoot\startnet-server.cmd"
+if (-not (Test-Path $StartnetSource)) {
+    Write-Host "ERROR: startnet-server.cmd not found at $StartnetSource" -ForegroundColor Red
+    exit 1
+}
 
-X:\bios-tools\auto-detect-apply.bat
-
-echo.
-echo  Configuration complete. If no reboot occurred,
-echo  press any key to reboot manually...
-pause >nul
-wpeutil reboot
-"@
+$StartnetContent = Get-Content $StartnetSource -Raw
 
 $StartnetPath = "$MountPath\Windows\System32\startnet.cmd"
 Set-Content -Path $StartnetPath -Value $StartnetContent -Encoding ASCII

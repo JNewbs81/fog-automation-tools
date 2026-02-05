@@ -43,24 +43,24 @@ mkdir X:\bios-tools\dell 2>nul
 mkdir X:\bios-tools\hp 2>nul
 mkdir X:\bios-tools\lenovo 2>nul
 
-REM Download all files using bitsadmin (available in WinPE)
+REM Download all files using PowerShell (available in WinPE)
 echo   Downloading auto-detect-apply.bat...
-bitsadmin /transfer dl1 /download /priority high "%TOOLS_URL%/auto-detect-apply.bat" X:\bios-tools\auto-detect-apply.bat >nul
+powershell -Command "Invoke-WebRequest -Uri '%TOOLS_URL%/auto-detect-apply.bat' -OutFile 'X:\bios-tools\auto-detect-apply.bat' -UseBasicParsing" 2>nul
 
 echo   Downloading Dell tools...
-bitsadmin /transfer dl2 /download /priority high "%TOOLS_URL%/dell/apply-dell-bios.bat" X:\bios-tools\dell\apply-dell-bios.bat >nul
-bitsadmin /transfer dl3 /download /priority high "%TOOLS_URL%/dell/fog-bios-config.cctk" X:\bios-tools\dell\fog-bios-config.cctk >nul
-bitsadmin /transfer dl4 /download /priority high "%TOOLS_URL%/dell/cctk.exe" X:\bios-tools\dell\cctk.exe >nul
+powershell -Command "Invoke-WebRequest -Uri '%TOOLS_URL%/dell/apply-dell-bios.bat' -OutFile 'X:\bios-tools\dell\apply-dell-bios.bat' -UseBasicParsing" 2>nul
+powershell -Command "Invoke-WebRequest -Uri '%TOOLS_URL%/dell/fog-bios-config.cctk' -OutFile 'X:\bios-tools\dell\fog-bios-config.cctk' -UseBasicParsing" 2>nul
+powershell -Command "Invoke-WebRequest -Uri '%TOOLS_URL%/dell/cctk.exe' -OutFile 'X:\bios-tools\dell\cctk.exe' -UseBasicParsing" 2>nul
 
 echo   Downloading HP tools...
-bitsadmin /transfer dl5 /download /priority high "%TOOLS_URL%/hp/apply-hp-bios.bat" X:\bios-tools\hp\apply-hp-bios.bat >nul
-bitsadmin /transfer dl6 /download /priority high "%TOOLS_URL%/hp/fog-config.REPSET" X:\bios-tools\hp\fog-config.REPSET >nul
-bitsadmin /transfer dl7 /download /priority high "%TOOLS_URL%/hp/BiosConfigUtility64.exe" X:\bios-tools\hp\BiosConfigUtility64.exe >nul
+powershell -Command "Invoke-WebRequest -Uri '%TOOLS_URL%/hp/apply-hp-bios.bat' -OutFile 'X:\bios-tools\hp\apply-hp-bios.bat' -UseBasicParsing" 2>nul
+powershell -Command "Invoke-WebRequest -Uri '%TOOLS_URL%/hp/fog-config.REPSET' -OutFile 'X:\bios-tools\hp\fog-config.REPSET' -UseBasicParsing" 2>nul
+powershell -Command "Invoke-WebRequest -Uri '%TOOLS_URL%/hp/BiosConfigUtility64.exe' -OutFile 'X:\bios-tools\hp\BiosConfigUtility64.exe' -UseBasicParsing" 2>nul
 
 echo   Downloading Lenovo tools...
-bitsadmin /transfer dl8 /download /priority high "%TOOLS_URL%/lenovo/apply-lenovo-bios.bat" X:\bios-tools\lenovo\apply-lenovo-bios.bat >nul
-bitsadmin /transfer dl9 /download /priority high "%TOOLS_URL%/lenovo/fog-config.ini" X:\bios-tools\lenovo\fog-config.ini >nul
-bitsadmin /transfer dl10 /download /priority high "%TOOLS_URL%/lenovo/ThinkBiosConfig.hta" X:\bios-tools\lenovo\ThinkBiosConfig.hta >nul
+powershell -Command "Invoke-WebRequest -Uri '%TOOLS_URL%/lenovo/apply-lenovo-bios.bat' -OutFile 'X:\bios-tools\lenovo\apply-lenovo-bios.bat' -UseBasicParsing" 2>nul
+powershell -Command "Invoke-WebRequest -Uri '%TOOLS_URL%/lenovo/fog-config.ini' -OutFile 'X:\bios-tools\lenovo\fog-config.ini' -UseBasicParsing" 2>nul
+powershell -Command "Invoke-WebRequest -Uri '%TOOLS_URL%/lenovo/ThinkBiosConfig.hta' -OutFile 'X:\bios-tools\lenovo\ThinkBiosConfig.hta' -UseBasicParsing" 2>nul
 
 echo   Download complete.
 echo.
