@@ -1,16 +1,68 @@
-# React + Vite
+# QuickPXE
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Free BIOS configuration automation for PXE boot and Windows deployment**
 
-Currently, two official plugins are available:
+Generate ready-to-use WinPE scripts from your BIOS config files. Perfect for PC resellers, IT departments, and refurbishers.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+### 🆓 Free Script Generator (No Login)
+- Upload your BIOS config file (.cctk, .REPSET, .ini)
+- Get a ready-to-use startup script for WinPE
+- Download and embed in your USB for offline PCs
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### ☁️ Cloud Storage (Sign in with Google)
+- Save unlimited scripts to the cloud
+- Get server-hosted URLs for auto-updates
+- Organize by model (OptiPlex 7080, EliteDesk 800, etc.)
+- Download for offline/air-gapped PCs
 
-## Expanding the ESLint configuration
+### 🔧 Supported Vendors
+- **Dell** - Command Configure (CCTK)
+- **HP** - BIOS Configuration Utility (BCU)
+- **Lenovo** - Think BIOS Config Tool (TBCT)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+
+- **Frontend**: React + Vite
+- **Auth**: Azure AD B2C (Google sign-in)
+- **Database**: Azure Cosmos DB (free tier)
+- **Hosting**: Azure Static Web Apps (free tier)
+
+## Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start dev server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+## Azure Deployment
+
+See [AZURE-SETUP.md](./AZURE-SETUP.md) for complete deployment instructions.
+
+Quick steps:
+1. Create Azure AD B2C tenant + Google OAuth
+2. Create Cosmos DB (free tier)
+3. Deploy to Azure Static Web Apps
+4. Configure environment variables
+
+## Cost
+
+**$0/month** on Azure free tier:
+- Static Web Apps: 100GB bandwidth/month
+- Azure AD B2C: 50,000 users/month
+- Cosmos DB: 1000 RU/s + 25GB storage
+
+## License
+
+MIT License - see [LICENSE](./LICENSE)
+
+## Related
+
+This is the web interface for [fog-automation-tools](https://github.com/JNewbs81/fog-automation-tools) - the underlying PowerShell scripts and BIOS configs.
